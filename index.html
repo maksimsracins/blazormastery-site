@@ -1,0 +1,506 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Blazor Mastery — Learn Blazor, one swipe at a time</title>
+  <meta name="description" content="Master Blazor with daily swipe cards. Junior to Senior — at your own pace. Available on the App Store." />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg:       #0E0E10;
+      --surface:  #1A1A1E;
+      --border:   #2A2A30;
+      --text:     #F2F0EB;
+      --muted:    #8A8A9A;
+      --accent:   #7C6FF7;
+      --junior:   #7C6FF7;
+      --mid:      #2DD4BF;
+      --senior:   #F59E0B;
+    }
+
+    html { scroll-behavior: smooth; }
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif;
+      line-height: 1.6;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    a { color: inherit; text-decoration: none; }
+
+    /* ── NAV ── */
+    nav {
+      position: sticky; top: 0; z-index: 100;
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 0 5vw;
+      height: 60px;
+      background: rgba(14,14,16,0.85);
+      backdrop-filter: blur(12px);
+      border-bottom: 1px solid var(--border);
+    }
+    .nav-logo {
+      font-size: 1rem; font-weight: 700; letter-spacing: -0.02em;
+      display: flex; align-items: center; gap: 8px;
+    }
+    .nav-logo-dot {
+      width: 8px; height: 8px; border-radius: 50%;
+      background: var(--accent);
+      box-shadow: 0 0 8px var(--accent);
+    }
+    .nav-cta {
+      background: var(--accent);
+      color: #fff;
+      padding: 8px 18px;
+      border-radius: 20px;
+      font-size: 0.85rem;
+      font-weight: 600;
+      transition: opacity .2s;
+    }
+    .nav-cta:hover { opacity: .85; }
+
+    /* ── HERO ── */
+    .hero {
+      display: flex; flex-direction: column; align-items: center;
+      text-align: center;
+      padding: 96px 5vw 80px;
+      position: relative; overflow: hidden;
+    }
+    .hero::before {
+      content: '';
+      position: absolute; top: -120px; left: 50%; transform: translateX(-50%);
+      width: 600px; height: 600px; border-radius: 50%;
+      background: radial-gradient(circle, rgba(124,111,247,.18) 0%, transparent 70%);
+      pointer-events: none;
+    }
+    .hero-badge {
+      display: inline-block;
+      background: rgba(124,111,247,.12);
+      border: 1px solid rgba(124,111,247,.3);
+      color: var(--accent);
+      font-size: 0.78rem; font-weight: 600; letter-spacing: .06em; text-transform: uppercase;
+      padding: 5px 14px; border-radius: 20px;
+      margin-bottom: 24px;
+    }
+    .hero h1 {
+      font-size: clamp(2.4rem, 6vw, 4.2rem);
+      font-weight: 800; letter-spacing: -0.04em;
+      line-height: 1.1;
+      max-width: 700px;
+      margin-bottom: 20px;
+    }
+    .hero h1 span { color: var(--accent); }
+    .hero p {
+      color: var(--muted);
+      font-size: clamp(1rem, 2vw, 1.15rem);
+      max-width: 480px;
+      margin-bottom: 40px;
+    }
+    .hero-actions { display: flex; gap: 14px; flex-wrap: wrap; justify-content: center; }
+    .btn-primary {
+      display: inline-flex; align-items: center; gap: 10px;
+      background: var(--accent);
+      color: #fff;
+      padding: 14px 28px; border-radius: 14px;
+      font-size: 1rem; font-weight: 700;
+      transition: transform .2s, box-shadow .2s;
+      box-shadow: 0 4px 24px rgba(124,111,247,.35);
+    }
+    .btn-primary:hover { transform: translateY(-2px); box-shadow: 0 8px 32px rgba(124,111,247,.45); }
+    .btn-secondary {
+      display: inline-flex; align-items: center; gap: 8px;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      color: var(--text);
+      padding: 14px 28px; border-radius: 14px;
+      font-size: 1rem; font-weight: 600;
+      transition: border-color .2s;
+    }
+    .btn-secondary:hover { border-color: var(--accent); }
+
+    /* App Store badge SVG inline */
+    .appstore-badge { height: 20px; }
+
+    /* ── PHONE MOCKUP ── */
+    .mockup-wrap {
+      margin-top: 72px;
+      position: relative; display: flex; justify-content: center;
+    }
+    .phone {
+      width: 260px;
+      background: #18181C;
+      border-radius: 44px;
+      border: 1.5px solid #333;
+      box-shadow: 0 32px 80px rgba(0,0,0,.7), 0 0 0 1px #111;
+      overflow: hidden;
+      position: relative;
+    }
+    .phone-notch {
+      width: 90px; height: 26px;
+      background: #0E0E10;
+      border-radius: 0 0 18px 18px;
+      margin: 0 auto;
+      position: relative; z-index: 2;
+    }
+    .phone-screen {
+      background: var(--bg);
+      padding: 12px 14px 20px;
+    }
+    .phone-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 20px;
+      padding: 20px 16px;
+      margin-bottom: 10px;
+    }
+    .phone-pill {
+      display: inline-block;
+      background: rgba(124,111,247,.15);
+      color: var(--junior);
+      font-size: 0.6rem; font-weight: 700; letter-spacing: .06em; text-transform: uppercase;
+      padding: 3px 9px; border-radius: 20px;
+      margin-bottom: 10px;
+    }
+    .phone-card-q {
+      font-size: 0.72rem; font-weight: 700; color: var(--text);
+      margin-bottom: 8px; line-height: 1.35;
+    }
+    .phone-card-a {
+      font-size: 0.65rem; color: var(--muted); line-height: 1.4;
+    }
+    .phone-swipe-hint {
+      display: flex; justify-content: center; gap: 6px; margin-top: 6px;
+    }
+    .phone-dot { width: 6px; height: 6px; border-radius: 50%; background: var(--border); }
+    .phone-dot.active { background: var(--accent); }
+
+    /* ── SECTION SHELL ── */
+    section { padding: 80px 5vw; }
+    .section-label {
+      font-size: 0.78rem; font-weight: 700; letter-spacing: .1em; text-transform: uppercase;
+      color: var(--accent); margin-bottom: 12px;
+    }
+    .section-title {
+      font-size: clamp(1.6rem, 4vw, 2.4rem);
+      font-weight: 800; letter-spacing: -0.03em;
+      margin-bottom: 16px;
+    }
+    .section-sub { color: var(--muted); font-size: 1.05rem; max-width: 500px; }
+
+    /* ── FEATURES ── */
+    .features { background: var(--bg); }
+    .features-header { max-width: 600px; margin: 0 auto 52px; text-align: center; }
+    .features-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+      gap: 20px;
+      max-width: 960px; margin: 0 auto;
+    }
+    .feature-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 18px;
+      padding: 28px 24px;
+      transition: border-color .2s, transform .2s;
+    }
+    .feature-card:hover { border-color: rgba(124,111,247,.4); transform: translateY(-3px); }
+    .feature-icon {
+      width: 44px; height: 44px; border-radius: 12px;
+      background: rgba(124,111,247,.12);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 1.3rem; margin-bottom: 16px;
+    }
+    .feature-card h3 { font-size: 1rem; font-weight: 700; margin-bottom: 8px; }
+    .feature-card p { font-size: 0.88rem; color: var(--muted); line-height: 1.55; }
+
+    /* ── TIERS ── */
+    .tiers { background: var(--surface); border-top: 1px solid var(--border); border-bottom: 1px solid var(--border); }
+    .tiers-header { max-width: 600px; margin: 0 auto 52px; text-align: center; }
+    .tiers-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+      gap: 20px; max-width: 960px; margin: 0 auto;
+    }
+    .tier-card {
+      border-radius: 20px;
+      padding: 32px 28px;
+      border: 1px solid;
+      position: relative; overflow: hidden;
+    }
+    .tier-card::before {
+      content: '';
+      position: absolute; top: 0; left: 0; right: 0; height: 3px;
+    }
+    .tier-junior { border-color: rgba(124,111,247,.25); background: rgba(124,111,247,.05); }
+    .tier-junior::before { background: var(--junior); }
+    .tier-mid    { border-color: rgba(45,212,191,.25);  background: rgba(45,212,191,.05); }
+    .tier-mid::before    { background: var(--mid); }
+    .tier-senior { border-color: rgba(245,158,11,.25);  background: rgba(245,158,11,.05); }
+    .tier-senior::before { background: var(--senior); }
+    .tier-badge {
+      display: inline-block;
+      font-size: 0.7rem; font-weight: 700; letter-spacing: .08em; text-transform: uppercase;
+      padding: 4px 11px; border-radius: 20px;
+      margin-bottom: 16px;
+    }
+    .tier-junior .tier-badge { background: rgba(124,111,247,.15); color: var(--junior); }
+    .tier-mid    .tier-badge { background: rgba(45,212,191,.15);  color: var(--mid); }
+    .tier-senior .tier-badge { background: rgba(245,158,11,.15);  color: var(--senior); }
+    .tier-card h3 { font-size: 1.2rem; font-weight: 800; margin-bottom: 14px; }
+    .tier-card ul { list-style: none; display: flex; flex-direction: column; gap: 8px; }
+    .tier-card ul li {
+      font-size: 0.88rem; color: var(--muted);
+      display: flex; align-items: flex-start; gap: 8px;
+    }
+    .tier-card ul li::before {
+      content: '→'; font-size: 0.75rem; margin-top: 2px; flex-shrink: 0;
+    }
+    .tier-junior ul li::before { color: var(--junior); }
+    .tier-mid    ul li::before { color: var(--mid); }
+    .tier-senior ul li::before { color: var(--senior); }
+
+    /* ── STATS ── */
+    .stats {
+      display: flex; flex-wrap: wrap; justify-content: center; gap: 0;
+      max-width: 780px; margin: 0 auto;
+      border: 1px solid var(--border); border-radius: 20px;
+      overflow: hidden;
+    }
+    .stat {
+      flex: 1; min-width: 160px;
+      padding: 36px 24px; text-align: center;
+      border-right: 1px solid var(--border);
+    }
+    .stat:last-child { border-right: none; }
+    .stat-num { font-size: 2.4rem; font-weight: 800; letter-spacing: -0.04em; color: var(--accent); }
+    .stat-label { font-size: 0.82rem; color: var(--muted); margin-top: 4px; }
+
+    /* ── CTA BANNER ── */
+    .cta-banner {
+      text-align: center;
+      padding: 96px 5vw;
+      background: var(--bg);
+      position: relative; overflow: hidden;
+    }
+    .cta-banner::before {
+      content: '';
+      position: absolute; bottom: -80px; left: 50%; transform: translateX(-50%);
+      width: 500px; height: 500px; border-radius: 50%;
+      background: radial-gradient(circle, rgba(124,111,247,.12) 0%, transparent 70%);
+      pointer-events: none;
+    }
+    .cta-banner h2 {
+      font-size: clamp(1.8rem, 4vw, 3rem);
+      font-weight: 800; letter-spacing: -0.04em;
+      margin-bottom: 16px;
+    }
+    .cta-banner p { color: var(--muted); font-size: 1.05rem; margin-bottom: 36px; }
+
+    /* ── FOOTER ── */
+    footer {
+      border-top: 1px solid var(--border);
+      padding: 40px 5vw;
+      display: flex; flex-wrap: wrap; gap: 20px;
+      justify-content: space-between; align-items: flex-start;
+    }
+    .footer-brand { font-size: 0.95rem; font-weight: 700; margin-bottom: 6px; }
+    .footer-copy { font-size: 0.78rem; color: var(--muted); max-width: 560px; line-height: 1.6; }
+    .footer-links { display: flex; gap: 20px; }
+    .footer-links a { font-size: 0.82rem; color: var(--muted); transition: color .2s; }
+    .footer-links a:hover { color: var(--text); }
+
+    /* ── RESPONSIVE ── */
+    @media (max-width: 600px) {
+      .stat { border-right: none; border-bottom: 1px solid var(--border); }
+      .stat:last-child { border-bottom: none; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav>
+  <div class="nav-logo">
+    <div class="nav-logo-dot"></div>
+    Blazor Mastery
+  </div>
+  <a href="#download" class="nav-cta">Download Free</a>
+</nav>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="hero-badge">Now on the App Store</div>
+  <h1>Master <span>Blazor</span>,<br>one swipe at a time</h1>
+  <p>Flashcard-based learning for .NET developers. Junior to Senior — at your own pace, offline-ready.</p>
+  <div class="hero-actions">
+    <a href="#download" class="btn-primary" id="download">
+      <svg class="appstore-badge" viewBox="0 0 24 24" fill="currentColor">
+        <path d="M18.71 19.5c-.83 1.24-1.71 2.45-3.05 2.47-1.34.03-1.77-.79-3.29-.79-1.53 0-2 .77-3.27.82-1.31.05-2.3-1.32-3.14-2.53C4.25 17 2.94 12.45 4.7 9.39c.87-1.52 2.43-2.48 4.12-2.51 1.28-.02 2.5.87 3.29.87.78 0 2.26-1.07 3.8-.91.65.03 2.47.26 3.64 1.98-.09.06-2.17 1.28-2.15 3.81.03 3.02 2.65 4.03 2.68 4.04-.03.07-.42 1.44-1.38 2.83M13 3.5c.73-.83 1.94-1.46 2.94-1.5.13 1.17-.34 2.35-1.04 3.19-.69.85-1.83 1.51-2.95 1.42-.15-1.15.41-2.35 1.05-3.11z"/>
+      </svg>
+      Download on App Store
+    </a>
+    <a href="#features" class="btn-secondary">See Features</a>
+  </div>
+
+  <!-- Phone mockup -->
+  <div class="mockup-wrap">
+    <div class="phone">
+      <div class="phone-notch"></div>
+      <div class="phone-screen">
+        <div class="phone-card">
+          <div class="phone-pill">Junior</div>
+          <div class="phone-card-q">What is a Blazor component?</div>
+          <div class="phone-card-a">A self-contained unit of UI that combines Razor markup with C# logic in a single .razor file.</div>
+        </div>
+        <div class="phone-swipe-hint">
+          <div class="phone-dot"></div>
+          <div class="phone-dot active"></div>
+          <div class="phone-dot"></div>
+          <div class="phone-dot"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- STATS -->
+<section style="padding: 0 5vw 72px;">
+  <div class="stats">
+    <div class="stat">
+      <div class="stat-num">100+</div>
+      <div class="stat-label">Flashcards</div>
+    </div>
+    <div class="stat">
+      <div class="stat-num">3</div>
+      <div class="stat-label">Skill Tiers</div>
+    </div>
+    <div class="stat">
+      <div class="stat-num">100%</div>
+      <div class="stat-label">Offline Ready</div>
+    </div>
+    <div class="stat">
+      <div class="stat-num">Free</div>
+      <div class="stat-label">No Paywalls</div>
+    </div>
+  </div>
+</section>
+
+<!-- FEATURES -->
+<section class="features" id="features">
+  <div class="features-header">
+    <div class="section-label">Features</div>
+    <div class="section-title">Everything you need to level up</div>
+    <p class="section-sub">Built specifically for .NET developers who want to learn Blazor without the noise.</p>
+  </div>
+  <div class="features-grid">
+    <div class="feature-card">
+      <div class="feature-icon">↔</div>
+      <h3>Swipe to Learn</h3>
+      <p>Flip cards with a natural swipe gesture. See the question, think, then reveal the answer.</p>
+    </div>
+    <div class="feature-card">
+      <div class="feature-icon">✓</div>
+      <h3>Quiz Mode</h3>
+      <p>Test your knowledge with multiple-choice quizzes that reinforce what you've learned.</p>
+    </div>
+    <div class="feature-card">
+      <div class="feature-icon">◎</div>
+      <h3>Progress Tracking</h3>
+      <p>See how far you've come across all three tiers. Your progress is saved automatically.</p>
+    </div>
+    <div class="feature-card">
+      <div class="feature-icon">⊞</div>
+      <h3>Glossary</h3>
+      <p>Quick-access reference for essential Blazor and .NET terms, always one tap away.</p>
+    </div>
+    <div class="feature-card">
+      <div class="feature-icon">✈</div>
+      <h3>Fully Offline</h3>
+      <p>No internet required. Learn on the subway, on a flight, or anywhere your phone goes.</p>
+    </div>
+    <div class="feature-card">
+      <div class="feature-icon">◑</div>
+      <h3>Dark by Default</h3>
+      <p>Easy on developer eyes. A focused dark interface designed for extended learning sessions.</p>
+    </div>
+  </div>
+</section>
+
+<!-- TIERS -->
+<section class="tiers" id="tiers">
+  <div class="tiers-header">
+    <div class="section-label">Curriculum</div>
+    <div class="section-title">Three tiers, one clear path</div>
+    <p class="section-sub">Start from the basics and progress through mid-level patterns to senior-level mastery.</p>
+  </div>
+  <div class="tiers-grid">
+    <div class="tier-card tier-junior">
+      <div class="tier-badge">Junior</div>
+      <h3>Core Foundations</h3>
+      <ul>
+        <li>Components & Razor syntax</li>
+        <li>Data binding & parameters</li>
+        <li>Event handling</li>
+        <li>Built-in directives</li>
+        <li>Component lifecycle</li>
+      </ul>
+    </div>
+    <div class="tier-card tier-mid">
+      <div class="tier-badge">Mid</div>
+      <h3>Real-world Patterns</h3>
+      <ul>
+        <li>Forms & validation</li>
+        <li>Dependency injection</li>
+        <li>HTTP & API calls</li>
+        <li>State management</li>
+        <li>Reusable component design</li>
+      </ul>
+    </div>
+    <div class="tier-card tier-senior">
+      <div class="tier-badge">Senior</div>
+      <h3>Advanced Mastery</h3>
+      <ul>
+        <li>JS Interop</li>
+        <li>Authentication & authorization</li>
+        <li>Blazor WebAssembly deep dive</li>
+        <li>Performance optimization</li>
+        <li>Advanced render patterns</li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<!-- CTA -->
+<section class="cta-banner">
+  <h2>Start learning Blazor today</h2>
+  <p>Free to download. No account required. Just open and swipe.</p>
+  <a href="#" class="btn-primary">
+    <svg class="appstore-badge" viewBox="0 0 24 24" fill="currentColor">
+      <path d="M18.71 19.5c-.83 1.24-1.71 2.45-3.05 2.47-1.34.03-1.77-.79-3.29-.79-1.53 0-2 .77-3.27.82-1.31.05-2.3-1.32-3.14-2.53C4.25 17 2.94 12.45 4.7 9.39c.87-1.52 2.43-2.48 4.12-2.51 1.28-.02 2.5.87 3.29.87.78 0 2.26-1.07 3.8-.91.65.03 2.47.26 3.64 1.98-.09.06-2.17 1.28-2.15 3.81.03 3.02 2.65 4.03 2.68 4.04-.03.07-.42 1.44-1.38 2.83M13 3.5c.73-.83 1.94-1.46 2.94-1.5.13 1.17-.34 2.35-1.04 3.19-.69.85-1.83 1.51-2.95 1.42-.15-1.15.41-2.35 1.05-3.11z"/>
+    </svg>
+    Download on App Store
+  </a>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <div>
+    <div class="footer-brand">Blazor Mastery</div>
+    <p class="footer-copy">
+      © 2026 Maksims Racins. All rights reserved.<br>
+      Blazor Mastery is an independent educational application and is not affiliated with, endorsed by,
+      or in any way associated with Microsoft Corporation. "Blazor" and ".NET" are trademarks or
+      registered trademarks of Microsoft Corporation in the United States and/or other countries.
+      All references to Blazor are solely for descriptive and educational purposes.
+    </p>
+  </div>
+  <div class="footer-links">
+    <a href="privacy.html">Privacy Policy</a>
+    <a href="support.html">Support</a>
+  </div>
+</footer>
+
+</body>
+</html>
